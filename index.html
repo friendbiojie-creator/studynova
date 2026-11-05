@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>StudyNova AI</title>
+  <meta name="theme-color" content="#1d4ed8" />
+
+  <!-- Fonts & Math Styling -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #1d4ed8;
+      --primary-hover: #1e40af;
+      --bg: #ffffff;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --user-bubble: #1d4ed8;
+      --user-text: #ffffff;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    /* 1. AD PLACEMENT WRAPPER (breathing space + margin-bottom: 25px) */
+    .ad-banner-wrapper {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 25px;
+      padding-top: 10px;
+      background-color: var(--surface);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 50;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #top-ad-banner {
+      width: 320px;
+      min-height: 50px;
+      margin: 0 auto;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #top-ad-banner iframe, 
+    #top-ad-banner > div {
+      margin: 0 auto !important;
+      display: block !important;
+    }
+
+    /* APP HEADER */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-icon {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, #1d4ed8, #6366f1);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 700; font-size: 15px;
+      box-shadow: 0 2px 4px rgba(29, 78, 216, 0.2);
+    }
+    .brand-title {
+      font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.3px;
+    }
+
+    .nav-action-btn {
+      background: #f8fafc; border: 1px solid var(--border);
+      color: var(--text); font-size: 12px; font-weight: 600;
+      padding: 7px 12px; border-radius: var(--radius-md);
+      cursor: pointer; transition: background 0.15s;
+    }
+    .nav-action-btn:active { background: #e2e8f0; }
+
+    /* CLEAN CHAT CONTAINER (NO HEAVY BOXES) */
+    #chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    /* USER MESSAGE */
+    .message.user {
+      align-self: flex-end;
+      align-items: flex-end;
+      max-width: 85%;
+    }
+    .message.user .bubble {
+      background: var(--user-bubble);
+      color: var(--user-text);
+      border-radius: 18px 18px 4px 18px;
+      padding: 10px 15px;
+      font-size: 15px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    /* AI RESPONSE (Clean WhatsApp/ChatGPT style) */
+    .message.assistant {
+      align-self: flex-start;
+      max-width: 100%;
+      width: 100%;
+    }
+    .message.assistant .bubble {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 4px 0 !important;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    /* RTL RULES FOR URDU / ARABIC */
+    [dir="rtl"], .bubble[dir="rtl"] {
+      direction: rtl !important;
+      text-align: right !important;
+      unicode-bidi: isolate !important;
+      font-family: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', Tahoma, sans-serif !important;
+      line-height: 2 !important;
+    }
+
+    .bubble p { margin-bottom: 8px; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble ul, .bubble ol { margin: 8px 0; padding-left: 20px; }
+    .bubble[dir="rtl"] ul, .bubble[dir="rtl"] ol { padding-right: 22px; padding-left: 0; }
+
+    /* INPUT CONTROLS */
+    .input-bar {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .input-wrapper {
+      flex: 1; display: flex; align-items: center;
+      background: #f1f5f9; border: 1px solid transparent;
+      border-radius: 24px; padding: 4px 12px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .input-wrapper:focus-within {
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+
+    #user-input {
+      width: 100%; border: none; outline: none; background: transparent;
+      font-size: 15px; line-height: 1.4; max-height: 120px; min-height: 24px;
+      resize: none; padding: 6px 0; color: var(--text); font-family: inherit;
+    }
+
+    .icon-action-btn {
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; padding: 7px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; transition: color 0.2s, transform 0.1s;
+    }
+    .icon-action-btn:active { transform: scale(0.92); }
+
+    /* Pulsing red mic animation when recording */
+    .icon-action-btn.recording {
+      color: #ef4444 !important;
+      animation: pulseRecord 1s infinite alternate;
+    }
+    @keyframes pulseRecord {
+      from { transform: scale(1); }
+      to { transform: scale(1.22); }
+    }
+
+    .btn-send {
+      width: 40px; height: 40px; background: var(--primary);
+      border: none; border-radius: 50%; color: white; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      box-shadow: 0 2px 4px rgba(29, 78, 216, 0.25);
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-send:active { transform: scale(0.92); }
+
+    /* LOADING DOTS */
+    .typing-dots {
+      display: flex; gap: 4px; padding: 6px 0;
+    }
+    .typing-dots span {
+      width: 6px; height: 6px; background: var(--text-muted);
+      border-radius: 50%; opacity: 0.6; animation: blink 1.2s infinite ease-in-out both;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+  </style>
+</head>
+<body>
+
+  <!-- 1. AD BANNER PROPER WRAPPER (margin-bottom: 25px; text-align: center) -->
+  <div class="ad-banner-wrapper">
+    <div id="top-ad-banner" aria-label="Advertisement Banner">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '6e3bff8712e8e4c02309fdc77af22928',
+          'format' : 'iframe',
+          'height' : 50,
+          'width' : 320,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://bauval.org/22/6e3bff8712e8e4c02309fdc77af22928"></script>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">SN</div>
+      <div class="brand-title">StudyNova AI</div>
+    </div>
+    <button type="button" class="nav-action-btn" id="btn-new-chat">Clear Chat</button>
+  </header>
+
+  <!-- CHAT CONTAINER -->
+  <div id="chat-container"></div>
+
+  <!-- INPUT CONTROLS -->
+  <div class="input-bar">
+    <div class="input-wrapper">
+      <textarea id="user-input" rows="1" placeholder="Type your question or math problem..."></textarea>
+      <button type="button" class="icon-action-btn" id="btn-mic" title="Voice Input (Click to speak)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+          <line x1="12" y1="19" x2="12" y2="22"></line>
+        </svg>
+      </button>
+    </div>
+
+    <button type="button" class="btn-send" id="btn-send" title="Send Question">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    const chatContainer = document.getElementById('chat-container');
+    const userInput = document.getElementById('user-input');
+    const btnSend = document.getElementById('btn-send');
+    const btnNewChat = document.getElementById('btn-new-chat');
+    const btnMic = document.getElementById('btn-mic');
+
+    function isRtlString(str) {
+      return /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/.test(str || '');
+    }
+
+    /* -------------------------------------------------------------
+       REAL-TIME MATHEMATICAL CALCULATION ENGINE
+    ------------------------------------------------------------- */
+    function evaluateMath(rawInput) {
+      let q = rawInput.replace(/[?؟=]/g, '').trim();
+      q = q.replace(/what\s+is|calculate|solve|evaluate/gi, '').trim();
+      q = q.replace(/×/g, '*').replace(/÷/g, '/').replace(/\^/g, '**');
+
+      const simple = rawInput.match(/^\s*([0-9\.]+)\s*([\+\-\*\/])\s*([0-9\.]+)\s*[=\?؟]*\s*$/);
+      if (simple) {
+        const a = parseFloat(simple[1]);
+        const op = simple[2];
+        const b = parseFloat(simple[3]);
+        let res = 0;
+        if (op === '+') res = a + b;
+        else if (op === '-') res = a - b;
+        else if (op === '*') res = a * b;
+        else if (op === '/') res = b !== 0 ? (a / b) : 'Undefined';
+        return { isMath: true, result: typeof res === 'number' && !Number.isInteger(res) ? parseFloat(res.toFixed(6)) : res };
+      }
+
+      if (/^[0-9\.\s\+\-\*\/\(\)\%\*\*eE]+$/.test(q) && /[0-9]/.test(q)) {
+        try {
+          const res = Function('"use strict"; return (' + q + ')')();
+          if (typeof res === 'number' && !isNaN(res) && isFinite(res)) {
+            return { isMath: true, result: Number.isInteger(res) ? res : parseFloat(res.toFixed(6)) };
+          }
+        } catch (e) {}
+      }
+
+      return { isMath: false };
+    }
+
+    /* -------------------------------------------------------------
+       LIVE AI ENGINE DISPATCHER
+    ------------------------------------------------------------- */
+    async function getSmartResponse(promptText) {
+      const math = evaluateMath(promptText);
+      if (math.isMath) {
+        return `**Result:** **${math.result}**`;
+      }
+
+      try {
+        const res = await fetch("https://text.pollinations.ai/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "system",
+                content: "You are StudyNova AI, an accurate and comprehensive academic assistant. Answer questions directly, accurately, and naturally in the user's language (Urdu, English, Arabic, etc.). Do not return generic placeholders."
+              },
+              { role: "user", content: promptText }
+            ],
+            model: "openai"
+          })
+        });
+
+        if (res.ok) {
+          const text = await res.text();
+          if (text && text.trim()) return text;
+        }
+      } catch (e) {}
+
+      if (isRtlString(promptText)) {
+        return `آپ کا سوال موصول ہو چکا ہے۔ براہ کرم انٹرنیٹ کنکشن چیک کر کے دوبارہ ارسال کریں۔`;
+      }
+      return `Your question was received. Please check your internet connection to fetch real-time data.`;
+    }
+
+    function appendUserMessage(text) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message user';
+      const rtl = isRtlString(text);
+      if (rtl) msgDiv.setAttribute('dir', 'rtl');
+      msgDiv.innerHTML = `<div class="bubble">${marked.parse(text || '')}</div>`;
+      chatContainer.appendChild(msgDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function appendAssistantMessage(textMarkdown) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message assistant';
+      const rtl = isRtlString(textMarkdown);
+      if (rtl) msgDiv.setAttribute('dir', 'rtl');
+      msgDiv.innerHTML = `<div class="bubble">${marked.parse(textMarkdown)}</div>`;
+      chatContainer.appendChild(msgDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function showLoader() {
+      const loader = document.createElement('div');
+      loader.id = 'loader';
+      loader.className = 'message assistant';
+      loader.innerHTML = `<div class="bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+      chatContainer.appendChild(loader);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function removeLoader() {
+      const loader = document.getElementById('loader');
+      if (loader) loader.remove();
+    }
+
+    async function handleSend() {
+      const text = userInput.value.trim();
+      if (!text) return;
+      userInput.value = '';
+      userInput.style.height = 'auto';
+
+      appendUserMessage(text);
+      showLoader();
+
+      const reply = await getSmartResponse(text);
+      removeLoader();
+      appendAssistantMessage(reply);
+    }
+
+    /* -------------------------------------------------------------
+       ROBUST WEB SPEECH API (MIC IMPLEMENTATION)
+    ------------------------------------------------------------- */
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let isRecording = false;
+
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        isRecording = true;
+        btnMic.classList.add('recording');
+        btnMic.title = "Listening... Speak now";
+        userInput.placeholder = "Listening... Speak now / سن رہا ہوں، بولیں...";
+      };
+
+      recognition.onresult = (event) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          transcript += event.results[i][0].transcript;
+        }
+
+        if (transcript) {
+          const prev = userInput.dataset.prevText || '';
+          userInput.value = prev ? `${prev} ${transcript}` : transcript;
+          userInput.dispatchEvent(new Event('input'));
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.warn('Speech recognition notice:', event.error);
+        isRecording = false;
+        btnMic.classList.remove('recording');
+        btnMic.title = "Voice Input";
+        userInput.placeholder = "Type your question or math problem...";
+
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          alert("Microphone permission was denied. Please allow microphone access in your browser settings.\n\nمائک کی اجازت بند ہے۔ براؤزر سیٹنگز میں جا کر مائک الاؤ (Allow) کریں۔");
+        } else if (event.error === 'network') {
+          alert("Microphone network error. Please check your internet connection.");
+        }
+      };
+
+      recognition.onend = () => {
+        isRecording = false;
+        btnMic.classList.remove('recording');
+        btnMic.title = "Voice Input";
+        userInput.placeholder = "Type your question or math problem...";
+        delete userInput.dataset.prevText;
+      };
+
+      btnMic.addEventListener('click', () => {
+        // Secure context notice (Mobile browsers restrict microphone to HTTPS or localhost)
+        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+          console.warn("Speech recognition typically requires HTTPS on mobile devices.");
+        }
+
+        if (isRecording) {
+          recognition.stop();
+        } else {
+          try {
+            userInput.dataset.prevText = userInput.value.trim();
+            // Automatically detect language: Urdu if RTL text exists, else device locale
+            if (isRtlString(userInput.value)) {
+              recognition.lang = 'ur-PK';
+            } else {
+              recognition.lang = navigator.language || 'en-US';
+            }
+            recognition.start();
+          } catch (err) {
+            console.error("Speech recognition could not start:", err);
+            recognition.stop();
+          }
+        }
+      });
+    } else {
+      btnMic.addEventListener('click', () => {
+        alert("Voice speech recognition is not supported on this browser. Please use Chrome, Edge, or Samsung Internet.");
+      });
+    }
+
+    /* -------------------------------------------------------------
+       INPUT & AUTO-EXPAND LISTENERS
+    ------------------------------------------------------------- */
+    btnSend.addEventListener('click', handleSend);
+
+    userInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+      }
+    });
+
+    userInput.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+      if (isRtlString(this.value)) {
+        this.setAttribute('dir', 'rtl');
+      } else {
+        this.removeAttribute('dir');
+      }
+    });
+
+    btnNewChat.addEventListener('click', () => {
+      chatContainer.innerHTML = '';
+    });
+  </script>
+</body>
+</html>
