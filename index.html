@@ -6,9 +6,9 @@
   <title>StudyNova AI</title>
   <meta name="theme-color" content="#1d4ed8" />
 
-  <!-- Fonts & Math Styling -->
+  <!-- Fonts & Math Rendering -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
   
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -40,6 +40,7 @@
       flex-direction: column;
       height: 100dvh;
       overflow: hidden;
+      position: relative;
     }
 
     /* 1. AD PLACEMENT WRAPPER (breathing space + margin-bottom: 25px) */
@@ -80,42 +81,80 @@
     header {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 12px 18px;
+      padding: 10px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-shrink: 0;
     }
 
-    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-icon-nav {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
     .brand-icon {
-      width: 34px; height: 34px;
+      width: 32px; height: 32px;
       background: linear-gradient(135deg, #1d4ed8, #6366f1);
       border-radius: var(--radius-md);
       display: flex; align-items: center; justify-content: center;
-      color: white; font-weight: 700; font-size: 15px;
-      box-shadow: 0 2px 4px rgba(29, 78, 216, 0.2);
+      color: white; font-weight: 700; font-size: 14px;
     }
+
     .brand-title {
-      font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.3px;
+      font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.3px;
     }
 
-    .nav-action-btn {
-      background: #f8fafc; border: 1px solid var(--border);
-      color: var(--text); font-size: 12px; font-weight: 600;
-      padding: 7px 12px; border-radius: var(--radius-md);
-      cursor: pointer; transition: background 0.15s;
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .nav-action-btn:active { background: #e2e8f0; }
 
-    /* CLEAN CHAT CONTAINER (NO HEAVY BOXES) */
+    .nav-btn {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+    }
+    .nav-btn.featured {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: var(--primary);
+    }
+    .nav-btn:active { background: #e2e8f0; }
+
+    /* CHAT CONTAINER (OPEN / NO BOXES) */
     #chat-container {
       flex: 1;
       overflow-y: auto;
       padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
       scroll-behavior: smooth;
     }
 
@@ -125,7 +164,6 @@
       width: 100%;
     }
 
-    /* USER MESSAGE */
     .message.user {
       align-self: flex-end;
       align-items: flex-end;
@@ -141,7 +179,6 @@
       word-break: break-word;
     }
 
-    /* AI RESPONSE (Clean WhatsApp/ChatGPT style) */
     .message.assistant {
       align-self: flex-start;
       max-width: 100%;
@@ -158,7 +195,7 @@
       word-break: break-word;
     }
 
-    /* RTL RULES FOR URDU / ARABIC */
+    /* RIGID RTL FOR URDU / ARABIC */
     [dir="rtl"], .bubble[dir="rtl"] {
       direction: rtl !important;
       text-align: right !important;
@@ -167,12 +204,7 @@
       line-height: 2 !important;
     }
 
-    .bubble p { margin-bottom: 8px; }
-    .bubble p:last-child { margin-bottom: 0; }
-    .bubble ul, .bubble ol { margin: 8px 0; padding-left: 20px; }
-    .bubble[dir="rtl"] ul, .bubble[dir="rtl"] ol { padding-right: 22px; padding-left: 0; }
-
-    /* INPUT CONTROLS */
+    /* INPUT BAR */
     .input-bar {
       background: var(--surface);
       border-top: 1px solid var(--border);
@@ -185,13 +217,11 @@
 
     .input-wrapper {
       flex: 1; display: flex; align-items: center;
-      background: #f1f5f9; border: 1px solid transparent;
-      border-radius: 24px; padding: 4px 12px;
-      transition: border-color 0.2s, background 0.2s;
+      background: #f1f5f9; border-radius: 24px; padding: 4px 12px;
+      border: 1px solid transparent; transition: all 0.2s;
     }
     .input-wrapper:focus-within {
-      border-color: var(--primary);
-      background: #ffffff;
+      background: #ffffff; border-color: var(--primary);
     }
 
     #user-input {
@@ -203,33 +233,21 @@
     .icon-action-btn {
       background: none; border: none; color: var(--text-muted);
       cursor: pointer; padding: 7px; border-radius: 50%; display: flex;
-      align-items: center; justify-content: center; transition: color 0.2s, transform 0.1s;
+      align-items: center; justify-content: center;
     }
-    .icon-action-btn:active { transform: scale(0.92); }
-
-    /* Pulsing red mic animation when recording */
     .icon-action-btn.recording {
-      color: #ef4444 !important;
-      animation: pulseRecord 1s infinite alternate;
+      color: #ef4444 !important; animation: pulseRecord 1s infinite alternate;
     }
-    @keyframes pulseRecord {
-      from { transform: scale(1); }
-      to { transform: scale(1.22); }
-    }
+    @keyframes pulseRecord { from { transform: scale(1); } to { transform: scale(1.25); } }
 
     .btn-send {
       width: 40px; height: 40px; background: var(--primary);
       border: none; border-radius: 50%; color: white; cursor: pointer;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
       box-shadow: 0 2px 4px rgba(29, 78, 216, 0.25);
-      transition: background 0.15s, transform 0.1s;
     }
-    .btn-send:active { transform: scale(0.92); }
 
-    /* LOADING DOTS */
-    .typing-dots {
-      display: flex; gap: 4px; padding: 6px 0;
-    }
+    .typing-dots { display: flex; gap: 4px; padding: 6px 0; }
     .typing-dots span {
       width: 6px; height: 6px; background: var(--text-muted);
       border-radius: 50%; opacity: 0.6; animation: blink 1.2s infinite ease-in-out both;
@@ -237,11 +255,64 @@
     .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
     .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes blink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+
+    /* CHAT HISTORY DRAWER (SIDEBAR) */
+    .history-drawer {
+      position: fixed;
+      top: 0; left: -280px; width: 280px; height: 100%;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      z-index: 100;
+      transition: left 0.25s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 4px 0 12px rgba(0,0,0,0.1);
+    }
+    .history-drawer.open { left: 0; }
+    .history-header {
+      padding: 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .history-title { font-size: 15px; font-weight: 700; color: var(--text); }
+    .history-list {
+      flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .history-item {
+      padding: 10px 12px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: #f8fafc;
+      font-size: 13px; color: var(--text); cursor: pointer;
+      text-overflow: ellipsis; overflow: hidden; white-space: nowrap;
+    }
+    .history-item:hover, .history-item:active { background: #eff6ff; border-color: var(--primary); }
+    .history-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.3); z-index: 90; display: none;
+    }
+    .history-overlay.open { display: block; }
   </style>
 </head>
 <body>
 
-  <!-- 1. AD BANNER PROPER WRAPPER (margin-bottom: 25px; text-align: center) -->
+  <!-- SIDEBAR OVERLAY -->
+  <div class="history-overlay" id="history-overlay"></div>
+
+  <!-- CHAT HISTORY DRAWER -->
+  <div class="history-drawer" id="history-drawer">
+    <div class="history-header">
+      <div class="history-title">📚 Chat History</div>
+      <button class="btn-icon-nav" id="btn-close-drawer">&times;</button>
+    </div>
+    <div style="padding: 10px;">
+      <button class="nav-btn" id="btn-clear-history" style="width: 100%; justify-content: center; color: #ef4444;">
+        🗑️ Clear All History
+      </button>
+    </div>
+    <div class="history-list" id="history-list">
+      <!-- Past chat items load here dynamically -->
+    </div>
+  </div>
+
+  <!-- 1. AD BANNER PROPER WRAPPER -->
   <div class="ad-banner-wrapper">
     <div id="top-ad-banner" aria-label="Advertisement Banner">
       <script type="text/javascript">
@@ -257,13 +328,20 @@
     </div>
   </div>
 
-  <!-- HEADER -->
+  <!-- HEADER WITH APPS LINK & HISTORY TOGGLE -->
   <header>
-    <div class="brand">
+    <div class="brand-group">
+      <button class="btn-icon-nav" id="btn-open-drawer" title="History">☰</button>
       <div class="brand-icon">SN</div>
       <div class="brand-title">StudyNova AI</div>
     </div>
-    <button type="button" class="nav-action-btn" id="btn-new-chat">Clear Chat</button>
+    <div class="header-actions">
+      <!-- لنک برائے دوسری ایپلیکیشن (یہاں آپ اپنی گیم یا ایپ کا لنک درج کر سکتے ہیں) -->
+      <a href="https://studynova-creator.github.io/" target="_blank" class="nav-btn featured" id="link-other-apps" title="Discover our other games and apps">
+        🚀 Other Apps
+      </a>
+      <button type="button" class="nav-btn" id="btn-new-chat">Clear</button>
+    </div>
   </header>
 
   <!-- CHAT CONTAINER -->
@@ -273,8 +351,8 @@
   <div class="input-bar">
     <div class="input-wrapper">
       <textarea id="user-input" rows="1" placeholder="Type your question or math problem..."></textarea>
-      <button type="button" class="icon-action-btn" id="btn-mic" title="Voice Input (Click to speak)">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <button type="button" class="icon-action-btn" id="btn-mic" title="Voice Input">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
           <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
           <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
           <line x1="12" y1="19" x2="12" y2="22"></line>
@@ -282,7 +360,7 @@
       </button>
     </div>
 
-    <button type="button" class="btn-send" id="btn-send" title="Send Question">
+    <button type="button" class="btn-send" id="btn-send" title="Send">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
       </svg>
@@ -295,13 +373,89 @@
     const btnSend = document.getElementById('btn-send');
     const btnNewChat = document.getElementById('btn-new-chat');
     const btnMic = document.getElementById('btn-mic');
+    const btnOpenDrawer = document.getElementById('btn-open-drawer');
+    const btnCloseDrawer = document.getElementById('btn-close-drawer');
+    const historyDrawer = document.getElementById('history-drawer');
+    const historyOverlay = document.getElementById('history-overlay');
+    const historyList = document.getElementById('history-list');
+    const btnClearHistory = document.getElementById('btn-clear-history');
+
+    let currentSession = [];
 
     function isRtlString(str) {
       return /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/.test(str || '');
     }
 
     /* -------------------------------------------------------------
-       REAL-TIME MATHEMATICAL CALCULATION ENGINE
+       CHAT HISTORY (LOCAL STORAGE)
+    ------------------------------------------------------------- */
+    function loadSavedHistory() {
+      const saved = localStorage.getItem('studynova_history');
+      return saved ? JSON.parse(saved) : [];
+    }
+
+    function saveCurrentToHistory(firstQuery) {
+      if (!currentSession.length) return;
+      let history = loadSavedHistory();
+      const title = firstQuery.slice(0, 30) + (firstQuery.length > 30 ? '...' : '');
+      history.unshift({
+        id: Date.now(),
+        title: title,
+        messages: [...currentSession]
+      });
+      // زیادہ سے زیادہ 25 چیٹس محفوظ رکھے گا
+      if (history.length > 25) history = history.slice(0, 25);
+      localStorage.setItem('studynova_history', JSON.stringify(history));
+      renderHistoryDrawer();
+    }
+
+    function renderHistoryDrawer() {
+      const history = loadSavedHistory();
+      historyList.innerHTML = '';
+      if (!history.length) {
+        historyList.innerHTML = '<div style="color:var(--text-muted);font-size:12px;text-align:center;padding:20px;">No saved chats yet.</div>';
+        return;
+      }
+      history.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.innerText = item.title;
+        div.addEventListener('click', () => {
+          chatContainer.innerHTML = '';
+          currentSession = [...item.messages];
+          item.messages.forEach(msg => {
+            if (msg.role === 'user') appendUserMessage(msg.text, false);
+            else appendAssistantMessage(msg.text, false);
+          });
+          closeDrawer();
+        });
+        historyList.appendChild(div);
+      });
+    }
+
+    function openDrawer() {
+      renderHistoryDrawer();
+      historyDrawer.classList.add('open');
+      historyOverlay.classList.add('open');
+    }
+
+    function closeDrawer() {
+      historyDrawer.classList.remove('open');
+      historyOverlay.classList.remove('open');
+    }
+
+    btnOpenDrawer.addEventListener('click', openDrawer);
+    btnCloseDrawer.addEventListener('click', closeDrawer);
+    historyOverlay.addEventListener('click', closeDrawer);
+    btnClearHistory.addEventListener('click', () => {
+      if (confirm('Delete all saved chat history?')) {
+        localStorage.removeItem('studynova_history');
+        renderHistoryDrawer();
+      }
+    });
+
+    /* -------------------------------------------------------------
+       REAL-TIME MATHEMATICS ENGINE
     ------------------------------------------------------------- */
     function evaluateMath(rawInput) {
       let q = rawInput.replace(/[?؟=]/g, '').trim();
@@ -350,7 +504,7 @@
             messages: [
               {
                 role: "system",
-                content: "You are StudyNova AI, an accurate and comprehensive academic assistant. Answer questions directly, accurately, and naturally in the user's language (Urdu, English, Arabic, etc.). Do not return generic placeholders."
+                content: "You are StudyNova AI, an accurate and comprehensive academic assistant. Answer questions directly, accurately, and naturally in the user's language. Never return generic placeholders."
               },
               { role: "user", content: promptText }
             ],
@@ -365,12 +519,12 @@
       } catch (e) {}
 
       if (isRtlString(promptText)) {
-        return `آپ کا سوال موصول ہو چکا ہے۔ براہ کرم انٹرنیٹ کنکشن چیک کر کے دوبارہ ارسال کریں۔`;
+        return `آپ کا سوال موصول ہو چکا ہے۔ انٹرنیٹ کنکشن چیک کر کے دوبارہ ارسال کریں۔`;
       }
       return `Your question was received. Please check your internet connection to fetch real-time data.`;
     }
 
-    function appendUserMessage(text) {
+    function appendUserMessage(text, record = true) {
       const msgDiv = document.createElement('div');
       msgDiv.className = 'message user';
       const rtl = isRtlString(text);
@@ -378,9 +532,10 @@
       msgDiv.innerHTML = `<div class="bubble">${marked.parse(text || '')}</div>`;
       chatContainer.appendChild(msgDiv);
       chatContainer.scrollTop = chatContainer.scrollHeight;
+      if (record) currentSession.push({ role: 'user', text });
     }
 
-    function appendAssistantMessage(textMarkdown) {
+    function appendAssistantMessage(textMarkdown, record = true) {
       const msgDiv = document.createElement('div');
       msgDiv.className = 'message assistant';
       const rtl = isRtlString(textMarkdown);
@@ -388,6 +543,7 @@
       msgDiv.innerHTML = `<div class="bubble">${marked.parse(textMarkdown)}</div>`;
       chatContainer.appendChild(msgDiv);
       chatContainer.scrollTop = chatContainer.scrollHeight;
+      if (record) currentSession.push({ role: 'assistant', text: textMarkdown });
     }
 
     function showLoader() {
@@ -407,6 +563,8 @@
     async function handleSend() {
       const text = userInput.value.trim();
       if (!text) return;
+      const isFirst = currentSession.length === 0;
+
       userInput.value = '';
       userInput.style.height = 'auto';
 
@@ -416,10 +574,16 @@
       const reply = await getSmartResponse(text);
       removeLoader();
       appendAssistantMessage(reply);
+
+      if (isFirst) {
+        saveCurrentToHistory(text);
+      } else {
+        saveCurrentToHistory(currentSession[0].text);
+      }
     }
 
     /* -------------------------------------------------------------
-       ROBUST WEB SPEECH API (MIC IMPLEMENTATION)
+       ROBUST WEB SPEECH API (MIC)
     ------------------------------------------------------------- */
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
@@ -429,13 +593,11 @@
       recognition = new SpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = true;
-      recognition.maxAlternatives = 1;
 
       recognition.onstart = () => {
         isRecording = true;
         btnMic.classList.add('recording');
-        btnMic.title = "Listening... Speak now";
-        userInput.placeholder = "Listening... Speak now / سن رہا ہوں، بولیں...";
+        userInput.placeholder = "Listening... سن رہا ہوں، بولیں...";
       };
 
       recognition.onresult = (event) => {
@@ -443,7 +605,6 @@
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           transcript += event.results[i][0].transcript;
         }
-
         if (transcript) {
           const prev = userInput.dataset.prevText || '';
           userInput.value = prev ? `${prev} ${transcript}` : transcript;
@@ -452,62 +613,37 @@
       };
 
       recognition.onerror = (event) => {
-        console.warn('Speech recognition notice:', event.error);
         isRecording = false;
         btnMic.classList.remove('recording');
-        btnMic.title = "Voice Input";
         userInput.placeholder = "Type your question or math problem...";
-
-        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-          alert("Microphone permission was denied. Please allow microphone access in your browser settings.\n\nمائک کی اجازت بند ہے۔ براؤزر سیٹنگز میں جا کر مائک الاؤ (Allow) کریں۔");
-        } else if (event.error === 'network') {
-          alert("Microphone network error. Please check your internet connection.");
+        if (event.error === 'not-allowed') {
+          alert("Microphone permission was denied. Please allow microphone access in your browser settings.");
         }
       };
 
       recognition.onend = () => {
         isRecording = false;
         btnMic.classList.remove('recording');
-        btnMic.title = "Voice Input";
         userInput.placeholder = "Type your question or math problem...";
         delete userInput.dataset.prevText;
       };
 
       btnMic.addEventListener('click', () => {
-        // Secure context notice (Mobile browsers restrict microphone to HTTPS or localhost)
-        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-          console.warn("Speech recognition typically requires HTTPS on mobile devices.");
-        }
-
         if (isRecording) {
           recognition.stop();
         } else {
           try {
             userInput.dataset.prevText = userInput.value.trim();
-            // Automatically detect language: Urdu if RTL text exists, else device locale
-            if (isRtlString(userInput.value)) {
-              recognition.lang = 'ur-PK';
-            } else {
-              recognition.lang = navigator.language || 'en-US';
-            }
+            recognition.lang = isRtlString(userInput.value) ? 'ur-PK' : (navigator.language || 'en-US');
             recognition.start();
           } catch (err) {
-            console.error("Speech recognition could not start:", err);
             recognition.stop();
           }
         }
       });
-    } else {
-      btnMic.addEventListener('click', () => {
-        alert("Voice speech recognition is not supported on this browser. Please use Chrome, Edge, or Samsung Internet.");
-      });
     }
 
-    /* -------------------------------------------------------------
-       INPUT & AUTO-EXPAND LISTENERS
-    ------------------------------------------------------------- */
     btnSend.addEventListener('click', handleSend);
-
     userInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -527,6 +663,7 @@
 
     btnNewChat.addEventListener('click', () => {
       chatContainer.innerHTML = '';
+      currentSession = [];
     });
   </script>
 </body>
